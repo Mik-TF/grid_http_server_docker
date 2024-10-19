@@ -1,0 +1,9 @@
+services:
+  grid3_client:
+    image: grid_http_server
+    restart: always
+    entrypoint: sh -c "cd /tfgrid-sdk-ts/packages/grid_http_server/ && yarn start"
+    volumes:
+      - ./config.json:/tfgrid-sdk-ts/packages/grid_http_server/src/config.json
+    ports:
+      - 3000:3000

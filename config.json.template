@@ -1,0 +1,6 @@
+{
+    "network": "network: main, dev, qa or test",
+    "mnemonic": "word1 word2 ... word12",
+    "storeSecret": "some-secret-can-be-anything",
+    "keypairType": "sr25519"
+}
