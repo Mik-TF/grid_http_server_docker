@@ -9,6 +9,9 @@
 - [API Endpoints](#api-endpoints)
 - [Logs](#logs)
 - [Test the API](#test-the-api)
+- [Requests with Curl](#requests-with-curl)
+- [Requests with Javascript](#requests-with-javascript)
+  - [Prerequisites](#prerequisites-1)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
@@ -96,6 +99,61 @@ You can also use curl:
 ```
 curl http://localhost:3000/ping
 ```
+
+## Requests with Curl
+
+- Ping the server:
+```bash
+curl http://localhost:3000/ping
+```
+
+- Create a farm:
+```bash
+curl -X POST http://localhost:3000/farms/create \
+     -H "Content-Type: application/json" \
+     -d '{"name": "MyNewFarm", "publicIps": []}'
+```
+
+- Get farm info by farm ID:
+```bash
+curl http://localhost:3000/farms/getFarmByID \
+     -H "Content-Type: application/json" \
+     -d '{"id": 1}'
+```
+
+## Requests with Javascript
+
+### Prerequisites
+
+- Install axios
+   ```
+   npm install axios
+   ```
+
+- Create a farm
+  - File name: `createFarm.js`
+  - File content:
+   ```js
+   const axios = require('axios');
+
+   async function createFarm() {
+   try {
+      const response = await axios.post('http://localhost:3000/farms/create', {
+         name: "farm1230"
+      });
+      console.log('Farm created:', response.data);
+   } catch (error) {
+      console.error('Error creating farm:', error.response?.data || error.message);
+   }
+   }
+
+   createFarm();
+   ```
+- Run the file
+   ```
+   node createFarm.js
+   ```
+
 
 ## Troubleshooting
 
