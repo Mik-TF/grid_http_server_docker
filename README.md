@@ -12,6 +12,8 @@
 - [Requests with Curl](#requests-with-curl)
 - [Requests with Javascript](#requests-with-javascript)
   - [Prerequisites](#prerequisites-1)
+  - [Create a Farm](#create-a-farm)
+  - [Deploy a VM](#deploy-a-vm)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
@@ -130,6 +132,8 @@ curl http://localhost:3000/farms/getFarmByID \
    npm install axios
    ```
 
+### Create a Farm
+
 - Create a farm
   - File name: `createFarm.js`
   - File content:
@@ -151,9 +155,20 @@ curl http://localhost:3000/farms/getFarmByID \
    ```
 - Run the file
    ```
-   node createFarm.js
+   node ./scripts/createFarm.js
    ```
 
+### Deploy a VM
+
+- Export the SSH key and node ID (e.g. with node 1)
+   ```
+   export SSH_KEY="$(cat ~/.ssh/id_rsa.pub)"
+   export NODE_ID=1
+   ```
+- Deploy the VM
+   ```
+   node ./scripts/deployVm.js
+   ```
 
 ## Troubleshooting
 
