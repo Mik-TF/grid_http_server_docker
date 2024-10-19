@@ -8,6 +8,7 @@
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
 - [Logs](#logs)
+- [Test the API](#test-the-api)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
@@ -78,6 +79,22 @@ For a full list of endpoints and their usage, please refer to the [TFGrid SDK do
 To view the server logs:
 ```
 docker-compose logs -f grid3_client
+```
+
+## Test the API
+
+Once you set up the API, you can test it with a basic ping-pong request:
+
+```
+http://localhost:3000/ping
+```
+
+This in a browser should return `pong`.
+
+You can also use curl:
+
+```
+curl http://localhost:3000/ping
 ```
 
 ## Troubleshooting
