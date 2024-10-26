@@ -14,9 +14,9 @@ function displayHelp() {
   console.log(`
 Usage:
 
-1. This script deploys a virtual machine (VM) with configurations provided either through environment variables or user prompts.
+1. This script can deploy or delete a virtual machine (VM) based on user input or command line arguments.
 
-2. You can set the following environment variables:
+2. You can set the following environment variables for deployment:
    - VMNAME: The name of the virtual machine.
    - MACHINENAME: The name of the machine to deploy.
    - DISKNAME: The name of the disk for the machine.
@@ -27,22 +27,15 @@ Usage:
    - NODE_ID: The node ID where the VM will be deployed (optional, defaults to 1).
    - SSH_KEY: The SSH key to access the deployed VM.
 
-3. When running the script, you can either:
-   - Provide the values directly when prompted.
-   - Press Enter to use the corresponding environment variable or a default value if no environment variable is set. If you do not provide a required value, the script will fail with an error message.
+3. You can run the script with the following options:
+   - Deploy a VM: \`node your-script.js\`
+   - Delete a VM: \`node your-script.js --delete\`
 
 Examples:
 
-To run the script, ensure your terminal is configured with the necessary environment variables. You could start the script like this:
+To delete a VM, specify the VM name when prompted.
 
-$ export VMNAME="myvm"
-$ export MACHINENAME="mymachine"
-$ export DISKNAME="mydisk"
-$ export MOUNTPOINT="/mnt/mydisk"
-$ export NETWORK_NAME="mynetwork"
-$ export NODE_ID="1"
-
-$ node your-script.js
+$ node your-script.js --delete
 `);
 }
 
@@ -59,20 +52,20 @@ async function deployVM(showHelp = false) {
   if (showHelp) {
     displayHelp();
     rl.close();
-    return;  // Exit the function after showing help
+    return;
   }
 
   try {
     // Define default values
     const defaultFlistUrl = 'https://hub.grid.tf/tf-official-apps/base:latest.flist';
-    
-    const defaultVMName = 'defaultvm'; // Default for the VM name
-    const defaultMachineName = 'defaultmachine'; // Default for the machine name
-    const defaultDiskName = 'defaultdisk'; // Default for the disk name
-    const defaultMountPoint = '/mnt/defaultdisk'; // Default for the mount point
-    const defaultNetworkName = 'defaultnetwork'; // Default for the network name
-    const defaultDescription = "Basic VM deployment with grid client"; // Default description
-    const defaultNodeId = '1'; // Default for the node ID
+    const defaultVMName = 'defaultvm';
+    const defaultMachineName = 'defaultmachine';
+    const defaultDiskName = 'defaultdisk';
+    const defaultMountPoint = '/mnt/defaultdisk';
+    const defaultNetworkName = 'defaultnetwork';
+    const defaultDescription = "Basic VM deployment with grid client";
+    const defaultNodeId = '1';
+    const defaultSSHKeyPath = path.join(os.homedir(), '.ssh', 'id_rsa.pub');  // Default SSH Key path
 
     // Ask user for inputs
     const finalVMName = await askForInput('Enter the VM name', process.env.VMNAME || defaultVMName);
@@ -83,7 +76,6 @@ async function deployVM(showHelp = false) {
     const finalDescription = await askForInput('Enter a description', process.env.DESCRIPTION || defaultDescription);
     const finalFlistUrl = await askForInput('Enter the flist URL', process.env.FLIST_URL || defaultFlistUrl);
     
-    // Ask for Node ID with default value
     const finalNodeId = await askForInput('Enter the Node ID', process.env.NODE_ID || defaultNodeId);
     const nodeId = parseInt(finalNodeId, 10);
     if (isNaN(nodeId)) {
@@ -91,14 +83,14 @@ async function deployVM(showHelp = false) {
     }
 
     // Determine the SSH key to use
-    let finalSSHKey = process.env.SSH_KEY; // Check the environment variable first
+    let finalSSHKey = process.env.SSH_KEY;
     if (!finalSSHKey) {
-      finalSSHKey = await askForInput('Enter your SSH key', null);
+      // Prompt for SSH key with clear instructions about using the default path
+      finalSSHKey = await askForInput(`Enter your SSH key (or press ENTER to use the SSH key from "${defaultSSHKeyPath}"):`, null);
     }
 
-    // If SSH key is still not provided, fallback to default path
+    // If still no SSH key provided, read from default file
     if (!finalSSHKey) {
-      const defaultSSHKeyPath = path.join(os.homedir(), '.ssh', 'id_rsa.pub');
       if (fs.existsSync(defaultSSHKeyPath)) {
         finalSSHKey = fs.readFileSync(defaultSSHKeyPath, 'utf8').trim();
       } else {
@@ -130,11 +122,11 @@ async function deployVM(showHelp = false) {
         flist: finalFlistUrl,
         entrypoint: "/sbin/zinit init",
         env: {
-          SSH_KEY: finalSSHKey // Use the resolved SSH key
+          SSH_KEY: finalSSHKey
         }
       }],
       metadata: "",
-      description: finalDescription // Use the resolved description
+      description: finalDescription
     };
 
     const response = await axios.post('http://localhost:3000/machines/deploy', payload);
@@ -146,6 +138,29 @@ async function deployVM(showHelp = false) {
   }
 }
 
-// Execute the script with help option based on user command line argument
+async function deleteVM() {
+  try {
+    // Ask for the machine name to delete
+    const finalMachineName = await askForInput('Enter the name of the machine to delete: ', null);
+    
+    // Prepare the request payload (adjust as needed based on API requirements)
+    const payload = { name: finalMachineName }; // Assuming the API expects a name in the payload
+    
+    const response = await axios.post('http://localhost:3000/machines/delete', payload); // Using POST, adjust if DELETE method is needed
+    console.log('VM Deleted:', response.data);
+  } catch (error) {
+    console.error('Error deleting VM:', error.response?.data || error.message);
+  } finally {
+    rl.close();
+  }
+}
+
+// Execute the script based on user command line argument
 const showHelp = process.argv.includes('--help') || process.argv.includes('-h');
-deployVM(showHelp);
+const shouldDelete = process.argv.includes('--delete') || process.argv.includes('-d');
+
+if (shouldDelete) {
+  deleteVM();
+} else {
+  deployVM(showHelp);
+}
