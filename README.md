@@ -160,7 +160,7 @@ curl http://localhost:3000/farms/getFarmByID \
 
 ### Deploy a VM
 
-The deployment script will asks you for the deployment parameters.
+The deployment script will ask you for the deployment parameters.
 
 - Deploy the VM
    ```
@@ -169,6 +169,10 @@ The deployment script will asks you for the deployment parameters.
 - See help menu
    ```
    node ./scripts/deployVm.ts -h
+   ```
+- Delete the deployment
+   ```
+   node ./scripts/deployVm.ts --delete
    ```
 
 ## Troubleshooting
