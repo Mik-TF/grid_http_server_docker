@@ -135,7 +135,7 @@ curl http://localhost:3000/farms/getFarmByID \
 ### Create a Farm
 
 - Create a farm
-  - File name: `createFarm.js`
+  - File name: `createFarm.ts`
   - File content:
    ```js
    const axios = require('axios');
@@ -155,19 +155,20 @@ curl http://localhost:3000/farms/getFarmByID \
    ```
 - Run the file
    ```
-   node ./scripts/createFarm.js
+   node ./scripts/createFarm.ts
    ```
 
 ### Deploy a VM
 
-- Export the SSH key and node ID (e.g. with node 1)
-   ```
-   export SSH_KEY="$(cat ~/.ssh/id_rsa.pub)"
-   export NODE_ID=1
-   ```
+The deployment script will asks you for the deployment parameters.
+
 - Deploy the VM
    ```
-   node ./scripts/deployVm.js
+   node ./scripts/deployVm.ts
+   ```
+- See help menu
+   ```
+   node ./scripts/deployVm.ts -h
    ```
 
 ## Troubleshooting
