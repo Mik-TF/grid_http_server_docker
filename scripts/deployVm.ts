@@ -113,7 +113,7 @@ async function deployVM(showHelp = false) {
           size: 10,
           mountpoint: finalMountPoint
         }],
-        public_ip: false,
+        public_ip: true,
         planetary: false,
         mycelium: true,
         cpu: 1,
