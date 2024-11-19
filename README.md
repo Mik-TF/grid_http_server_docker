@@ -37,12 +37,16 @@ This project sets up a Docker container running the TFGrid SDK HTTP server, whic
    cd grid_http_server_docker
    ```
 
-2. Create a `config.json` file in the project root with your configuration. You can use the file `config.json.template` as a template. Here is an example:
+2. Create a `config.json` file in the project root with your configuration. 
+   ```
+   cp config.json.template config.json
+   ```
+   You can use the file `config.json.template` as a template. Here is an example:
    ```json
    {
      "network": "dev",
      "mnemonic": "your TFGrid mnemonic here",
-     "storeSecret": "some-secret"
+     "storeSecret": "some-secret",
      "keypairType": "sr25519"
    }
    ```
@@ -57,14 +61,14 @@ This project sets up a Docker container running the TFGrid SDK HTTP server, whic
 
 1. Start the server:
    ```
-   docker-compose up -d
+   docker compose up -d
    ```
 
 2. The server will be available at `http://localhost:3000`
 
 3. To stop the server:
    ```
-   docker-compose down
+   docker compose down
    ```
 
 ## API Endpoints
@@ -83,7 +87,7 @@ For a full list of endpoints and their usage, please refer to the [TFGrid SDK do
 
 To view the server logs:
 ```
-docker-compose logs -f grid3_client
+docker compose logs -f grid3_client
 ```
 
 ## Test the API
