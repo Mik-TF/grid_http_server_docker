@@ -12,6 +12,13 @@ const rl = readline.createInterface({
 // Function to display help information
 function displayHelp() {
   console.log(`
+
+=================================
+ThreeFold Grid HTTP Server Docker
+=================================
+
+Welcome to the ThreeFold Grid HTTP Server Docker. This tool provides an API for interacting with the ThreeFold Grid.
+
 Usage:
 
 1. This script can deploy or delete a virtual machine (VM) based on user input or command line arguments.
@@ -30,13 +37,18 @@ Usage:
 3. You can run the script with the following options:
    - Deploy a VM: \`node your-script.js\`
    - Delete a VM: \`node your-script.js --delete\`
+   - Get VM info: \`node your-script.js --get-info\`
 
 Examples:
 
 To delete a VM, specify the VM name when prompted.
 
 $ node your-script.js --delete
-`);
+  `);
+  process.nextTick(() => {
+    rl.close();
+    process.exit(0); // Ensure the process exits
+  });
 }
 
 async function askForInput(prompt, defaultValue) {
@@ -46,6 +58,7 @@ async function askForInput(prompt, defaultValue) {
       resolve(input || defaultValue);
     });
   });
+  
 }
 
 async function deployVM(showHelp = false) {
@@ -159,12 +172,34 @@ async function deleteVM() {
   }
 }
 
+async function getVMInfo() {
+  try {
+    const vmName = await askForInput('Enter the name of the VM to get information about: ', null);
+
+    console.log("Retrieving VM information...");
+
+    const payload = { name: vmName };
+    const response = await axios.post('http://localhost:3000/machines/get', payload);
+    console.log('VM Information:', JSON.stringify(response.data, null, 2)); // Pretty-printed JSON
+
+  } catch (error) {
+    console.error('Error getting VM information:', error.response?.data || error.message);
+  } finally {
+    rl.close();
+  }
+}
+
 // Execute the script based on user command line argument
 const showHelp = process.argv.includes('--help') || process.argv.includes('-h');
 const shouldDelete = process.argv.includes('--delete') || process.argv.includes('-d');
+const shouldGetInfo = process.argv.includes('--get-info') || process.argv.includes('-g');
 
-if (shouldDelete) {
+if (showHelp) {
+  displayHelp(); // Make sure to update displayHelp to include the new option
+} else if (shouldDelete) {
   deleteVM();
+} else if (shouldGetInfo) {
+  getVMInfo();
 } else {
-  deployVM(showHelp);
+  deployVM();
 }
