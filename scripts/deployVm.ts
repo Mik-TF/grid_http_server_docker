@@ -98,6 +98,8 @@ async function deployVM(showHelp = false) {
       }
     }
 
+    console.log("We are deploying your workload on the ThreeFold Grid. It might take some time...");
+
     const payload = {
       name: finalVMName,
       network: {
@@ -141,8 +143,10 @@ async function deployVM(showHelp = false) {
 async function deleteVM() {
   try {
     // Ask for the machine name to delete
-    const finalMachineName = await askForInput('Enter the name of the machine to delete: ', null);
+    const finalMachineName = await askForInput('Enter the name of the VM to delete: ', null);
     
+    console.log("We are deleting your workload on the ThreeFold Grid. It might take some time...");
+
     // Prepare the request payload (adjust as needed based on API requirements)
     const payload = { name: finalMachineName }; // Assuming the API expects a name in the payload
     
